@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ChatBot from 'react-simple-chatbot';
+import ChatbotService from './../services/chatbot.service';
 import { ThemeProvider } from 'styled-components';
 import visualLogo from './../img/visual.png';
 
@@ -16,7 +17,49 @@ const theme = {
 };
 
 const ChatbotComponent = () => {
-    const [botAvatar, setBotAvatar] = useState(visualLogo)
+    const initialMessageState = {
+        content: {
+            input: {},
+            selection: null
+        }
+    }
+    const [message, setMessage] = useState(initialMessageState);
+    const [submitted, setSubmitted] = useState(false);
+    const botAvatar = visualLogo;
+
+    const handleInputChange = event => {
+        const { name, value } = event.target;
+        setMessage({ ...message, [name]: value });
+    };
+
+    const saveTutorial = () => {
+        let data = {
+            title: tutorial.title,
+            description: tutorial.description
+        };
+
+        ChatbotService.newMessage(data)
+            .then(response => {
+            setTutorial({
+                id: response.data.id,
+                title: response.data.title,
+                description: response.data.description,
+                published: response.data.published
+            });
+            setSubmitted(true);
+                console.log(response.data);
+            })
+            .catch(e => {
+                console.log(e);
+            }
+        );
+    };
+
+    const newTutorial = () => {
+        setTutorial(initialTutorialState);
+        setSubmitted(false);
+    };
+
     const handleEnd = ({ steps, values }) => {
         // console.log(steps);
         // console.log(values);

@@ -1,9 +1,4 @@
-#visualbotcomp {
-    background-image: url('./../img/bg.PNG');
-    background-size: cover;
-    width: 100vw;
-    height: 100vh;
-}
+#visualbotcomp {}
 
 body, html {
     padding: 0;

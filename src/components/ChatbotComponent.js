@@ -17,53 +17,92 @@ const theme = {
 };
 
 const ChatbotComponent = () => {
+    const botAvatar = visualLogo;
+    const initialStepsState = [
+        {
+            id: '1',
+            message: 'Olá. Qual o seu nome?',
+            trigger: '2',
+        },
+        {
+            id: '2',
+            user: true,
+            end: true
+        },
+    ]
     const initialMessageState = {
         content: {
             input: {},
             selection: null
         }
     }
+
+    const [steps, setSteps] = useState(initialStepsState);
     const [message, setMessage] = useState(initialMessageState);
     const [submitted, setSubmitted] = useState(false);
-    const botAvatar = visualLogo;
 
     const handleInputChange = event => {
-        const { name, value } = event.target;
-        setMessage({ ...message, [name]: value });
+        const oldSteps = steps;
+        const newStep = {
+            id: '3',
+            message: 'Olá. Qual o seu nome? 2',
+            trigger: '4'
+        }
+        const newStep2 = {
+            id: '4',
+            user: true,
+        }
+
+        oldSteps[oldSteps.length - 1].end = false;
+        oldSteps[oldSteps.length - 1].trigger =  '3';
+        oldSteps.push(newStep, newStep2)
+
+        let teste = { ...steps, newStep }
+        console.log(teste)
+
+        setSteps(oldSteps);
+
+        console.log(steps)
     };
 
-    const saveTutorial = () => {
-        let data = {
-            title: tutorial.title,
-            description: tutorial.description
-        };
+    // const handleInputChange = event => {
+    //     const { name, value } = event.target;
+    //     setMessage({ ...message, [name]: value });
+    // };
 
-        ChatbotService.newMessage(data)
-            .then(response => {
-            setTutorial({
-                id: response.data.id,
-                title: response.data.title,
-                description: response.data.description,
-                published: response.data.published
-            });
-            setSubmitted(true);
-                console.log(response.data);
-            })
-            .catch(e => {
-                console.log(e);
-            }
-        );
-    };
+    // const saveTutorial = () => {
+    //     let data = {
+    //         title: tutorial.title,
+    //         description: tutorial.description
+    //     };
 
-    const newTutorial = () => {
-        setTutorial(initialTutorialState);
-        setSubmitted(false);
-    };
+    //     ChatbotService.newMessage(data)
+    //         .then(response => {
+    //         setTutorial({
+    //             id: response.data.id,
+    //             title: response.data.title,
+    //             description: response.data.description,
+    //             published: response.data.published
+    //         });
+    //         setSubmitted(true);
+    //             console.log(response.data);
+    //         })
+    //         .catch(e => {
+    //             console.log(e);
+    //         }
+    //     );
+    // };
+
+    // const newTutorial = () => {
+    //     setTutorial(initialTutorialState);
+    //     setSubmitted(false);
+    // };
 
     const handleEnd = ({ steps, values }) => {
         // console.log(steps);
         // console.log(values);
         alert(`Chat handleEnd callback! Number: ${values[0]}`);
+        handleInputChange()
     }
 
     return(
@@ -81,48 +120,7 @@ const ChatbotComponent = () => {
                 recognitionEnable={true}
                 recognitionLang={'pt-br'}
                 recognitionPlaceholder={'escutando...'}
-                steps={[
-                    {
-                        id: '1',
-                        message: 'Olá. Qual o seu nome?',
-                        trigger: '2',
-                    },
-                    {
-                        id: '2',
-                        user: true,
-                        trigger: '3',
-                    },
-                    {
-                        id: '3',
-                        message: 'Olá {previousValue}, prazer em conhecê-lo!',
-                        trigger: '4'
-                    },
-                    {
-                        id: '4',
-                        message: 'Qual número eu estou pensando?',
-                        trigger: '5',
-                    },
-                    {
-                        id: '5',
-                        options: [
-                            { value: 1, label: 'Número 1', trigger: '7' },
-                            { value: 2, label: 'Número 2', trigger: '6' },
-                            { value: 3, label: 'Número 3', trigger: '6' },
-                        ],
-                        placeholder: 'Escolha uma opção',
-                        hideInput: false
-                    },
-                    {
-                        id: '6',
-                        message: 'Resposta errada, tente novamente.',
-                        trigger: '5',
-                    },
-                    {
-                        id: '7',
-                        message: 'Que demais! Você é um verdadeiro telapata!',
-                        end: true,
-                    },
-                ]}
+                steps={steps}
             />
         </ThemeProvider>
     )
